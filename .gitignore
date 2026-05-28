@@ -1,5 +1,7 @@
 /CLIENT/node_modules
 /SERVER/node_modules
+/SERVER/.env
+DESCISIONAL_CHOICES.md
 
 
 
