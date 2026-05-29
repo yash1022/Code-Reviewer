@@ -1,7 +1,16 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import dns from "dns";
 dotenv.config();
 const dbURI = process.env.MONGODB_URI;
+
+dns.setServers(
+  [
+     '1.1.1.1',
+     '8.8.8.8'
+  ]
+)
+
 
 export const connectDB = async () => {
   if (!dbURI) {
