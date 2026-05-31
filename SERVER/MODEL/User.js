@@ -16,12 +16,18 @@ const userSchema = new Schema({
     },
 
     GithubId:{
-        type:String
+        type:Number, 
+        unique:true
+    },
+    AccessToken:{
+        type:String,
+        isRequired:true
+        
     }
 },
 {timestamps:true})
 
 
-const userSchema = mongoose.Model("User",userSchema);
+const User  = mongoose.model("User",userSchema);
 
-export default userSchema;
+export default User;

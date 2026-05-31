@@ -1,8 +1,9 @@
 
 import axios from 'axios';
+import generateToken from '../UTILS/generateToken.js'
+import User from '../MODEL/User.js'
 
-
-export const findUser = async (accessToken) => {
+const findUser = async (accessToken) => {
     const result = await axios.get("https://api.github.com/user", {
         headers: {
             Authorization: `Bearer ${accessToken}`
@@ -11,6 +12,29 @@ export const findUser = async (accessToken) => {
 
     return result.data;
 }
+
+const saveUser = async(user,accessToken)=>{
+    const {login,id,email} = user;
+
+   const result =  await User.findOneAndUpdate({GithubId:id},{
+        Name:login,
+        Email:email,
+        GithubId:id,
+        AccesToken:accessToken
+    },{
+        new:true,
+        upsert:true
+        
+    })
+
+    return result;
+}
+
+
+
+
+
+
 
 export const githubLogin = (req,res)=>{
 
@@ -61,19 +85,10 @@ export const githubCallback = async (req,res)=>{
 
     console.log(user);
 
-    
+    const savedUser =  await saveUser(user,accessToken);
 
+    const token  = generateToken(savedUser._id);
 
-
-
-    
-    
-
-
-
-
-
-
-
+    return res.send({message:token});
 
 }
