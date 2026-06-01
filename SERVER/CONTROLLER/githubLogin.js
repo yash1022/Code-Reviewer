@@ -30,12 +30,6 @@ const saveUser = async(user,accessToken)=>{
     return result;
 }
 
-
-
-
-
-
-
 export const githubLogin = (req,res)=>{
 
     
@@ -51,6 +45,8 @@ export const githubLogin = (req,res)=>{
 
 export const githubCallback = async (req,res)=>{
 
+    try{
+
    
     const client_id  = process.env.CLIENT_ID;
     const client_secret = process.env.CLIENT_SECRET;
@@ -59,7 +55,7 @@ export const githubCallback = async (req,res)=>{
 
     if(!code)
     {
-        return res.json({status:400,message:"FAILED TO LOGIN"});
+        return res.status(400).json({message:"FAILED TO LOGIN"});
     }
     const url = "https://github.com/login/oauth/access_token";
 
@@ -79,16 +75,33 @@ export const githubCallback = async (req,res)=>{
 
     const accessToken = result.data.access_token;
 
-    console.log(accessToken)
+    if(!accessToken)
+    {
+        return res.status(400).json({message:"FAILED TO LOGIN"});
+    }
+
+   
 
     const user = await findUser(accessToken);
-
-    console.log(user);
-
     const savedUser =  await saveUser(user,accessToken);
-
     const token  = generateToken(savedUser._id);
 
-    return res.send({message:token});
+    res.cookie('accessToken',token,{
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly:true,
+        secure:process.env.MODE == 'DEVELOPMENT'? false:true,
+        sameSite:'strict'
+    })
+
+
+    return res.status(200).json({message:"LOGGED IN SUCCESSFULLY"});
+
+    
+
+    }
+    catch(e){
+
+        return res.status(400).json({message:"FAILED TO LOGIN"});
+    }
 
 }

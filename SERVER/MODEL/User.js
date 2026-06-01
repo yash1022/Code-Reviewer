@@ -21,7 +21,8 @@ const userSchema = new Schema({
     },
     AccessToken:{
         type:String,
-        isRequired:true
+        isRequired:true,
+        unique:true
         
     }
 },
