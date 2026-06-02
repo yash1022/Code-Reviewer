@@ -22,7 +22,7 @@ const saveUser = async(user,accessToken)=>{
         GithubId:id,
         AccesToken:accessToken
     },{
-        new:true,
+        returnDocument: 'after',
         upsert:true
         
     })
@@ -32,7 +32,7 @@ const saveUser = async(user,accessToken)=>{
 
 export const githubLogin = (req,res)=>{
 
-    
+    console.log("INSIDE GITHUB LOGIN");
 
     const redirectUri = "http://localhost:5000/api/auth/github/callback"
 
@@ -46,6 +46,8 @@ export const githubLogin = (req,res)=>{
 export const githubCallback = async (req,res)=>{
 
     try{
+
+        console.log("INSIDE CALLBACK")
 
    
     const client_id  = process.env.CLIENT_ID;
@@ -75,8 +77,11 @@ export const githubCallback = async (req,res)=>{
 
     const accessToken = result.data.access_token;
 
+    
+   
     if(!accessToken)
     {
+         console.log("NO ACCESS TOKEN")
         return res.status(400).json({message:"FAILED TO LOGIN"});
     }
 
@@ -94,7 +99,7 @@ export const githubCallback = async (req,res)=>{
     })
 
 
-    return res.status(200).json({message:"LOGGED IN SUCCESSFULLY"});
+    return res.redirect("http://localhost:5173/")
 
     
 

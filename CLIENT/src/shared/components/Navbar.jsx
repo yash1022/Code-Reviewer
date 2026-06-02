@@ -1,6 +1,10 @@
+import { Link } from 'react-router-dom'
 import './Navbar.css'
+import { useAuth } from '../contexts/AuthContext.jsx'
 
 function Navbar() {
+  const { user, isLoading, loginWithGithub, logout } = useAuth()
+
   return (
     <header className="nav">
       <div className="container nav-inner">
@@ -14,10 +18,30 @@ function Navbar() {
           <a href="#">Pricing</a>
           <a href="#">Docs</a>
         </nav>
-        <button className="github-button" type="button">
-          <span className="github-icon" aria-hidden="true"></span>
-          Login with GitHub
-        </button>
+        {user ? (
+          <div className="nav-actions">
+            <Link className="user-chip" to="/profile">
+              {user.Name ?? 'Profile'}
+            </Link>
+            <button
+              className="github-button logout-button"
+              type="button"
+              onClick={logout}
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <button
+            className="github-button"
+            type="button"
+            onClick={loginWithGithub}
+            disabled={isLoading}
+          >
+            <span className="github-icon" aria-hidden="true"></span>
+            {isLoading ? 'Connecting...' : 'Login with GitHub'}
+          </button>
+        )}
       </div>
     </header>
   )
