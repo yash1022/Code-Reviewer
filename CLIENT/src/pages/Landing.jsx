@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import '../app/App.css'
 
 function Landing() {
@@ -22,9 +23,9 @@ function Landing() {
                 velocity high without losing quality.
               </p>
               <div className="cta-row">
-                <button className="btn-primary" type="button">
-                  Start reviewing
-                </button>
+                <Link className="btn-primary" to="/dashboard">
+                  Get started
+                </Link>
                 <button className="btn-ghost" type="button">
                   View documentation
                 </button>

@@ -4,6 +4,7 @@ import Navbar from '../shared/components/Navbar.jsx'
 import { useAuth } from '../shared/contexts/AuthContext.jsx'
 import Landing from '../pages/Landing.jsx'
 import Profile from '../pages/Profile.jsx'
+import Dashboard from '../pages/Dashboard.jsx'
 
 function App() {
   const { fetchCurrentUser } = useAuth()
@@ -19,6 +20,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </div>
