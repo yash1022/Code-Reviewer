@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import './Dashboard.css'
+import apiClient from '../shared/api/axios.js'
 
 const repositories = [
   {
@@ -32,6 +34,14 @@ const repositories = [
 ]
 
 function Dashboard() {
+    useEffect(()=> {
+        fetchRepos();
+    },[])
+
+    const fetchRepos = async()=>{
+      const result = await apiClient.get("features/github/repos");
+        console.log(result.data);
+    }
   return (
     <div className="dashboard-page">
       <div className="container">

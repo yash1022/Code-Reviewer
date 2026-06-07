@@ -20,7 +20,7 @@ const saveUser = async(user,accessToken)=>{
         Name:login,
         Email:email,
         GithubId:id,
-        AccesToken:accessToken
+        AccessToken:accessToken
     },{
         returnDocument: 'after',
         upsert:true
