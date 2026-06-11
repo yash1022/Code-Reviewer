@@ -9,34 +9,22 @@ function Dashboard() {
     const [page, setPage] = useState(1);
     const [showNext, setShowNext] = useState(false);
     const [showPrev, setShowPrev] = useState(false);
-    
 
-
-
-
-
-
-
-
-
-
-
-    
 
     useEffect(()=> {
-        fetchRepos();
+        fetchRepos(page);
     },[]);
 
     
 
-    const fetchRepos = async()=>{
+    const fetchRepos = async(page)=>{
       try {
         setLoading(true);
         setError('');
 
         const result = await apiClient.get("features/github/repos",{
           params:{
-            page:1,
+            page: page || 1,
             limit:10
           }
         });
@@ -80,8 +68,30 @@ function Dashboard() {
     }
 
     const handleRefresh = () => {
-      fetchRepos();
+      fetchRepos(page);
     }
+
+    const handleNextPage = ()=>{
+
+      if(showNext)
+      {
+        const nextPage = page+1;
+        fetchRepos(nextPage);
+      }
+
+    }
+
+
+    const handlePrevPage = ()=>{
+      if(showPrev)
+      {
+        const prevPage = page-1;
+        fetchRepos(prevPage);
+      }
+    }
+
+
+    
   return (
     <div className="dashboard-page">
       <div className="container">
@@ -89,6 +99,7 @@ function Dashboard() {
           <div>
             <p className="eyebrow">Dashboard</p>
             <h1>Your GitHub repositories</h1>
+            <h1>Page {page}</h1>
             <p className="subcopy">
               Live repository cards from GitHub for the connected account.
             </p>
@@ -139,12 +150,12 @@ function Dashboard() {
 
         <div className="pagination-controls pagination-controls-bottom" aria-label="Repository pagination controls">
           {showPrev && (
-            <button className="btn-secondary" type="button">
+            <button className="btn-secondary" type="button" onClick={handlePrevPage}>
               Previous
             </button>
           )}
           {showNext && (
-            <button className="btn-secondary" type="button">
+            <button className="btn-secondary" type="button" onClick={handleNextPage} disabled={loading}>
               Next
             </button>
           )}
