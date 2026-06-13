@@ -59,3 +59,37 @@ export const fetchGithubRepos = async(req,res)=>{
         return res.status(500).json({message:"FAILED TO FETCH REPOS"});
     }
 }
+
+export const fetchGithubTrees = async(req,res)=>{
+
+    try
+    {
+        const id = req.user._id;
+        const owner = req.params.owner;
+        const repo  = req.params.repo;
+
+        if(!owner || !repo)
+        {
+            return res.status(400).json({message:"OWNER AND REPO ARE REQUIRED"});
+        }
+
+        const result = await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/trees/main?recursive=1`,{
+            headers:{
+                Authorization: `Bearer ${req.user.AccessToken}`,
+                Accept: "application/vnd.github+json"
+            }
+        })
+
+        return res.status(200).json(result.data);
+
+        
+
+
+
+    }
+    catch(err)
+    {
+        return res.status(500).json({message:"FAILED TO FETCH TREES"});
+    }
+
+}

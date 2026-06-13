@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import './Dashboard.css'
 import apiClient from '../shared/api/axios.js'
 
@@ -10,19 +11,12 @@ function Dashboard() {
     const [showNext, setShowNext] = useState(false);
     const [showPrev, setShowPrev] = useState(false);
 
-
-    useEffect(()=> {
-        fetchRepos(page);
-    },[]);
-
-    
-
-    const fetchRepos = async(page)=>{
+    const fetchRepos = useCallback(async(page)=>{
       try {
         setLoading(true);
         setError('');
 
-        const result = await apiClient.get("features/github/repos",{
+        const result = await apiClient.get("features/repos",{
           params:{
             page: page || 1,
             limit:10
@@ -47,13 +41,21 @@ function Dashboard() {
         
 
         setRepositories(data);
-      } catch (requestError) {
+      } catch {
         setError('Failed to load repository details.');
         setRepositories([]);
       } finally {
         setLoading(false);
       }
-    }
+    }, [])
+
+    useEffect(()=> {
+        const timerId = window.setTimeout(() => {
+          fetchRepos(1);
+        }, 0);
+
+        return () => window.clearTimeout(timerId);
+    },[fetchRepos]);
 
     const formatDate = (value) => {
       if (!value) {
@@ -115,13 +117,17 @@ function Dashboard() {
           ) : error ? (
             <div className="repo-card repo-card-state">{error}</div>
           ) : repositories.length > 0 ? (
-            repositories.map((repo) => (
-              <a
+            repositories.map((repo) => {
+              const owner = repo.owner?.login || repo.full_name?.split('/')?.[0]
+              const repoPath = owner && repo.name
+                ? `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo.name)}`
+                : '/dashboard'
+
+              return (
+              <Link
                 className="repo-card"
                 key={repo.id ?? repo.node_id ?? repo.full_name ?? repo.html_url}
-                href={repo.html_url}
-                target="_blank"
-                rel="noreferrer"
+                to={repoPath}
               >
                 <div className="repo-title-row">
                   <div>
@@ -141,8 +147,9 @@ function Dashboard() {
                   <span>Created {formatDate(repo.created_at)}</span>
                   <span>ID: {repo.id}</span>
                 </div>
-              </a>
-            ))
+              </Link>
+              )
+            })
           ) : (
             <div className="repo-card repo-card-state">No repository data available.</div>
           )}

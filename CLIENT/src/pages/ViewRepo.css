@@ -1,0 +1,102 @@
+.view-repo-page {
+  padding: 140px 0 120px;
+  color: #e2e8f0;
+}
+
+.view-repo-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+
+.view-repo-header h1 {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.repo-tree-shell {
+  overflow: auto;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.76);
+  box-shadow: inset 0 1px 0 rgba(59, 130, 246, 0.2);
+}
+
+.repo-tree,
+.tree-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree-row {
+  display: grid;
+  grid-template-columns: 54px minmax(180px, 1fr) max-content;
+  align-items: center;
+  gap: 12px;
+  min-height: 42px;
+  padding: 8px 18px 8px calc(18px + (var(--depth) * 22px));
+  border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+  color: #cbd5e1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+}
+
+.tree-row:hover {
+  background: rgba(30, 64, 175, 0.16);
+}
+
+.tree-icon {
+  width: 42px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0b1120;
+  text-align: center;
+  border-radius: 999px;
+  padding: 3px 0;
+}
+
+.tree-icon-folder {
+  background: #38bdf8;
+}
+
+.tree-icon-file {
+  background: #94a3b8;
+}
+
+.tree-name {
+  overflow-wrap: anywhere;
+}
+
+.tree-name-folder {
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.tree-size {
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.repo-tree-state {
+  margin: 0;
+  padding: 24px;
+  color: #cbd5e1;
+}
+
+@media (max-width: 700px) {
+  .tree-row {
+    grid-template-columns: 46px minmax(140px, 1fr);
+    padding-left: calc(14px + (var(--depth) * 16px));
+  }
+
+  .tree-size {
+    grid-column: 2;
+    white-space: normal;
+  }
+}

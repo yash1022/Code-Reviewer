@@ -5,6 +5,7 @@ import { useAuth } from '../shared/contexts/AuthContext.jsx'
 import Landing from '../pages/Landing.jsx'
 import Profile from '../pages/Profile.jsx'
 import Dashboard from '../pages/Dashboard.jsx'
+import ViewRepo from '../pages/ViewRepo.jsx'
 
 function App() {
   const { fetchCurrentUser } = useAuth()
@@ -21,6 +22,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/repos/:owner/:repo" element={<ViewRepo />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </div>
