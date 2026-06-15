@@ -93,3 +93,35 @@ export const fetchGithubTrees = async(req,res)=>{
     }
 
 }
+
+export const fetchContent = async(req,res)=>{
+    try
+    {
+        const id = req.user._id;
+
+        const owner = req.params.owner;
+        const repo  = req.params.repo;
+        const path = req.params.path;
+
+        if(!owner || !repo || !path)
+        {
+            return res.status(400).json({message:"OWNER, REPO AND PATH ARE REQUIRED"});
+        }
+
+        const result = await axios.get(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,{
+            headers:{
+                Authorization: `Bearer ${req.user.AccessToken}`,
+                Accept: "application/vnd.github+json"
+            }
+        })
+
+        return res.status(200).json(result.data);
+
+
+    }
+    catch(err)
+    {
+        return res.status(500).json({message:"FAILED TO FETCH CONTENT"});
+
+    }
+}

@@ -51,26 +51,45 @@ const sortNodes = (nodes) => {
   })
 }
 
-function TreeNode({ node, depth = 0 }) {
+function TreeNode({ node, owner, repo, depth = 0 }) {
   const children = sortNodes(node.children.values())
   const isFolder = node.type === 'tree'
+  const fileUrl = `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/code/${encodeURIComponent(node.path)}`
+
+  const rowContent = (
+    <>
+      <span className={`tree-icon ${isFolder ? 'tree-icon-folder' : 'tree-icon-file'}`}>
+        {isFolder ? 'DIR' : 'FILE'}
+      </span>
+      <span className={`tree-name ${isFolder ? 'tree-name-folder' : ''}`}>{node.name}</span>
+      {!isFolder && typeof node.size === 'number' && (
+        <span className="tree-size">{node.size.toLocaleString()} bytes</span>
+      )}
+    </>
+  )
 
   return (
     <li className="tree-node">
-      <div className="tree-row" style={{ '--depth': depth }}>
-        <span className={`tree-icon ${isFolder ? 'tree-icon-folder' : 'tree-icon-file'}`}>
-          {isFolder ? 'DIR' : 'FILE'}
-        </span>
-        <span className={`tree-name ${isFolder ? 'tree-name-folder' : ''}`}>{node.name}</span>
-        {!isFolder && typeof node.size === 'number' && (
-          <span className="tree-size">{node.size.toLocaleString()} bytes</span>
-        )}
-      </div>
+      {isFolder ? (
+        <div className="tree-row" style={{ '--depth': depth }}>
+          {rowContent}
+        </div>
+      ) : (
+        <Link className="tree-row tree-row-link" style={{ '--depth': depth }} to={fileUrl}>
+          {rowContent}
+        </Link>
+      )}
 
       {children.length > 0 && (
         <ul className="tree-children">
           {children.map((child) => (
-            <TreeNode key={child.path} node={child} depth={depth + 1} />
+            <TreeNode
+              key={child.path}
+              node={child}
+              owner={owner}
+              repo={repo}
+              depth={depth + 1}
+            />
           ))}
         </ul>
       )}
@@ -139,7 +158,7 @@ function ViewRepo() {
           ) : rootChildren.length > 0 ? (
             <ul className="repo-tree">
               {rootChildren.map((child) => (
-                <TreeNode key={child.path} node={child} />
+                <TreeNode key={child.path} node={child} owner={decodedOwner} repo={decodedRepo} />
               ))}
             </ul>
           ) : (

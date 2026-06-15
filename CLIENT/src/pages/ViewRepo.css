@@ -47,6 +47,11 @@
   font-size: 13px;
 }
 
+.tree-row-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .tree-row:hover {
   background: rgba(30, 64, 175, 0.16);
 }
