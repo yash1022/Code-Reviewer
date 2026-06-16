@@ -1,7 +1,6 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import apiClient from "../api/axios.js";
-
-const AuthContext = createContext(null);
+import { AuthContext } from "./authContext.js";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -30,7 +29,7 @@ export function AuthProvider({ children }) {
     } finally {
       setIsLoading(false);
     }
-  }, [fetchCurrentUser]);
+  }, []);
 
   const logout = useCallback(async () => {
     try {
@@ -46,12 +45,4 @@ export function AuthProvider({ children }) {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 }

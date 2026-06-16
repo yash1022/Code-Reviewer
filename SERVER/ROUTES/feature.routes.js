@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { fetchContent, fetchGithubRepos, fetchGithubTrees } from '../CONTROLLER/featureController.js'
+import { fetchContent, fetchGithubRepos, fetchGithubTrees } from '../CONTROLLER/features.Controller.js'
 import { authMiddleware } from '../MIDDLEWARE/authMiddleware.js'
 
 const router = Router()

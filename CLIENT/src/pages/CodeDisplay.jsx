@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import Editor from '@monaco-editor/react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import apiClient from '../shared/api/axios.js'
 import './CodeDisplay.css'
 
@@ -33,12 +33,33 @@ const getLanguageFromPath = (path = '') => {
   return extensionLanguageMap[extension] || 'plaintext'
 }
 
+const parseReviewResponse = (review) => {
+  if (review && typeof review === 'object') {
+    return review
+  }
+
+  if (typeof review !== 'string') {
+    throw new Error('Review response is not valid JSON.')
+  }
+
+  const cleanReview = review
+    .trim()
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/```$/i, '')
+    .trim()
+
+  return JSON.parse(cleanReview)
+}
+
 function CodeDisplay() {
   const { owner, repo, path } = useParams()
+  const navigate = useNavigate()
   const [fileContent, setFileContent] = useState('')
   const [fileMeta, setFileMeta] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [reviewStarted, setReviewStarted] = useState(false)
 
   const decodedOwner = owner ? decodeURIComponent(owner) : ''
   const decodedRepo = repo ? decodeURIComponent(repo) : ''
@@ -60,6 +81,7 @@ function CodeDisplay() {
           `features/repos/${encodeURIComponent(decodedOwner)}/${encodeURIComponent(decodedRepo)}/${encodeURIComponent(decodedPath)}/content`,
         )
         const payload = result.data || {}
+        console.log('API response payload:', payload)
         const nextContent = payload.encoding === 'base64'
           ? decodeBase64Content(payload.content)
           : payload.content || ''
@@ -78,6 +100,53 @@ function CodeDisplay() {
     fetchFileContent()
   }, [decodedOwner, decodedRepo, decodedPath])
 
+  const handleReview = async () =>{
+
+    setReviewStarted(true);
+
+    try
+    {
+
+      const base64EncodedCode = fileMeta.content;
+
+      if(!base64EncodedCode || typeof base64EncodedCode !== 'string')
+      {
+        setReviewStarted(false);
+        alert("File content is not available for review.");
+        return;
+      }
+
+      const result = await apiClient.post('ai/review', {
+        base64EncodedCode
+      })
+      const parsedReview = parseReviewResponse(result.data?.review)
+      const reviewState = {
+        review: parsedReview,
+        file: {
+          owner: decodedOwner,
+          repo: decodedRepo,
+          path: decodedPath,
+          name: fileMeta?.name || decodedPath,
+        },
+      }
+
+      sessionStorage.setItem('latestCodeReview', JSON.stringify(reviewState))
+      navigate('/review-results', { state: reviewState })
+
+
+      }
+
+    
+    catch
+    {
+        alert("Failed to start review. Please try again later.");
+    }
+    finally {
+      setReviewStarted(false)
+    }
+
+  }
+
   return (
     <div className="code-display-page">
       <div className="container">
@@ -91,8 +160,8 @@ function CodeDisplay() {
             <Link className="btn-secondary" to={`/repos/${encodeURIComponent(decodedOwner)}/${encodeURIComponent(decodedRepo)}`}>
               Back to structure
             </Link>
-            <button className="btn-primary" type="button">
-              Start review
+            <button className="btn-primary" type="button" onClick={handleReview} disabled={reviewStarted}>
+              {reviewStarted ? 'Reviewing...' : 'Start review'}
             </button>
           </div>
         </header>

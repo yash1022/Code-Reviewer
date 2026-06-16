@@ -5,6 +5,7 @@ import cors from 'cors'
 import express, { urlencoded } from 'express'
 import authRoutes from './ROUTES/auth.routes.js'
 import featureRoutes from './ROUTES/feature.routes.js'
+import aiRoutes from './ROUTES/ai.routes.js'
 import connectDB from './DB/connectDB.js'
 
 
@@ -25,6 +26,7 @@ app.use(cors({
 
 app.use('/api/auth', authRoutes)
 app.use('/api/features', featureRoutes)
+app.use('/api/ai',aiRoutes)
 
 
 

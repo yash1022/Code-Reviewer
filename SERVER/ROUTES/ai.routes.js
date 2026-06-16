@@ -1,0 +1,16 @@
+import { Router } from "express";
+import { authMiddleware } from "../MIDDLEWARE/authMiddleware.js";
+import { generateReview } from "../CONTROLLER/ai.Controller.js";
+
+
+const router  = Router();
+
+router.get("/", (req, res) => {
+    res.json({ ok: true, service: "ai" });
+});
+
+router.post('/review',authMiddleware,generateReview);
+
+
+
+export default router;

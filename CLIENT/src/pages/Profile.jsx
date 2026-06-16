@@ -1,4 +1,4 @@
-import { useAuth } from '../shared/contexts/AuthContext.jsx'
+import { useAuth } from '../shared/contexts/useAuth.js'
 import './Profile.css'
 
 function Profile() {

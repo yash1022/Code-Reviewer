@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { githubCallback, githubLogin } from '../CONTROLLER/githubLogin.js'
+import { githubCallback, githubLogin } from '../CONTROLLER/auth.Controller.js'
 import { authMiddleware } from '../MIDDLEWARE/authMiddleware.js'
 
 const router = Router()

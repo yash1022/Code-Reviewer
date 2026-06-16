@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Navbar from '../shared/components/Navbar.jsx'
-import { useAuth } from '../shared/contexts/AuthContext.jsx'
+import { useAuth } from '../shared/contexts/useAuth.js'
 import Landing from '../pages/Landing.jsx'
 import Profile from '../pages/Profile.jsx'
 import Dashboard from '../pages/Dashboard.jsx'
 import ViewRepo from '../pages/ViewRepo.jsx'
 import CodeDisplay from '../pages/CodeDisplay.jsx'
+import ReviewDashboard from '../pages/ReviewDashboard.jsx'
 
 function App() {
   const { fetchCurrentUser } = useAuth()
@@ -25,6 +26,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/repos/:owner/:repo" element={<ViewRepo />} />
         <Route path="/repos/:owner/:repo/code/:path" element={<CodeDisplay />} />
+        <Route path="/review-results" element={<ReviewDashboard />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </div>
