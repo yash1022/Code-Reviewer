@@ -108,6 +108,9 @@ function CodeDisplay() {
     {
 
       const base64EncodedCode = fileMeta.content;
+      const sha = fileMeta.sha;
+      const filePath = fileMeta.path;
+      const repoName = fileMeta.repository?.name || decodedRepo;
 
       if(!base64EncodedCode || typeof base64EncodedCode !== 'string')
       {
@@ -117,7 +120,10 @@ function CodeDisplay() {
       }
 
       const result = await apiClient.post('ai/review', {
-        base64EncodedCode
+        base64EncodedCode,
+        sha,
+        filePath,
+        decodedRepo
       })
       const parsedReview = parseReviewResponse(result.data?.review)
       const reviewState = {
