@@ -123,7 +123,7 @@ function CodeDisplay() {
         base64EncodedCode,
         sha,
         filePath,
-        decodedRepo
+        repoName:decodedRepo
       })
       const parsedReview = parseReviewResponse(result.data?.review)
       const reviewState = {

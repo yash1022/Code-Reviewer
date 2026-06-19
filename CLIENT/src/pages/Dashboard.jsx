@@ -18,7 +18,7 @@ function Dashboard() {
 
         const result = await apiClient.get("features/repos",{
           params:{
-            page: page || 1,
+            // page: page || 1,
             limit:10
           }
         });

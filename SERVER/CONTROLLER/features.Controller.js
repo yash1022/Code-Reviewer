@@ -1,12 +1,13 @@
 import User from "../MODEL/User.js";
 import axios from "axios";
 import {authMiddleware} from "../MIDDLEWARE/authMiddleware.js"
+import { AppError } from "../UTILS/appError.Utils.js"
+
 
 
 
 export const fetchGithubRepos = async(req,res)=>{
-    try
-    {
+    
 
         const userId = req.user._id;
 
@@ -14,21 +15,25 @@ export const fetchGithubRepos = async(req,res)=>{
 
         if(!user)
         {
-            return res.status(404).json({message:"USER NOT FOUND"});
+            // return res.status(404).json({message:"USER NOT FOUND"});
+
+           throw new AppError("USER NOT FOUND",404);
         }
 
         const accessToken = user.AccessToken;
         const username = user.Name;
 
         if(!accessToken){
-            return res.status(401).json({message:"GITHUB ACCESS TOKEN NOT FOUND. PLEASE SIGN IN AGAIN."});
+            // return res.status(401).json({message:"GITHUB ACCESS TOKEN NOT FOUND. PLEASE SIGN IN AGAIN."});
+            throw new AppError("GITHUB ACCESS TOKEN NOT FOUND. PLEASE SIGN IN AGAIN.",401);
         }
 
         const { page, limit } = req.query;
 
         if(!page || !limit)
         {
-            return res.status(400).json({message:"PAGE AND LIMIT ARE REQUIRED"});
+            // return res.status(400).json({message:"PAGE AND LIMIT ARE REQUIRED"});
+            throw new AppError("PAGE AND LIMIT ARE REQUIRED",400);
         }
 
         const result = await axios.get(`https://api.github.com/users/${username}/repos`,{
@@ -51,13 +56,7 @@ export const fetchGithubRepos = async(req,res)=>{
         console.log(result.data);
 
         return res.status(200).json({ data: result.data, pagination: paginationInfo });
-    }
-    catch(err)
-    {
-        
-
-        return res.status(500).json({message:"FAILED TO FETCH REPOS"});
-    }
+  
 }
 
 export const fetchGithubTrees = async(req,res)=>{

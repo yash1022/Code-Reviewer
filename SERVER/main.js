@@ -7,17 +7,20 @@ import authRoutes from './ROUTES/auth.routes.js'
 import featureRoutes from './ROUTES/feature.routes.js'
 import aiRoutes from './ROUTES/ai.routes.js'
 import connectDB from './DB/connectDB.js'
+import { errorHandler } from './MIDDLEWARE/errorHandler.Utils.js'
 
 
 const app = express()
 
 connectDB();
 
-app.use(express.json())
+app.use(express.json(
+    
+))
 app.use(urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     credentials:true
 }
 
@@ -27,6 +30,8 @@ app.use(cors({
 app.use('/api/auth', authRoutes)
 app.use('/api/features', featureRoutes)
 app.use('/api/ai',aiRoutes)
+
+app.use(errorHandler);
 
 
 

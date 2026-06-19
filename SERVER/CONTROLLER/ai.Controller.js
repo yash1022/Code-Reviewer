@@ -8,7 +8,13 @@ export const generateReview = async (req, res) => {
         const {base64EncodedCode,sha,filePath,repoName} = req.body;
         const userId = req.user?._id;
 
+        if(!base64EncodedCode || !sha || !filePath || !repoName)
+        {
+            return res.status(400).json({message:"MISSING REQUIRED FIELDS"});
+        }
+
         const existingReview = await Review.findOne({
+            
             user: userId,
             repository: repoName,
             filePath: filePath,
@@ -23,10 +29,6 @@ export const generateReview = async (req, res) => {
             }
         }
 
-        if(!base64EncodedCode)
-        {
-            return res.status(400).json({message:"CODE IS NOT PROVIDED"});
-        }
 
         const review = await codeReviewService(base64EncodedCode);
 
