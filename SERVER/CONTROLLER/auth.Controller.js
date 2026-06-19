@@ -2,6 +2,7 @@
 import axios from 'axios';
 import generateToken from '../UTILS/generateToken.js'
 import User from '../MODEL/User.js'
+import { AppError } from '../UTILS/appError.Utils.js';
 
 const findUser = async (accessToken) => {
     const result = await axios.get("https://api.github.com/user", {
@@ -45,9 +46,8 @@ export const githubLogin = (req,res)=>{
 
 export const githubCallback = async (req,res)=>{
 
-    try{
 
-        console.log("INSIDE CALLBACK")
+        
 
    
     const client_id  = process.env.CLIENT_ID;
@@ -57,7 +57,7 @@ export const githubCallback = async (req,res)=>{
 
     if(!code)
     {
-        return res.status(400).json({message:"FAILED TO LOGIN"});
+       throw new AppError("CODE NOT FOUND",400);
     }
     const url = "https://github.com/login/oauth/access_token";
 
@@ -81,8 +81,7 @@ export const githubCallback = async (req,res)=>{
    
     if(!accessToken)
     {
-         console.log("NO ACCESS TOKEN")
-        return res.status(400).json({message:"FAILED TO LOGIN"});
+        throw new AppError("FAILED TO LOGIN", 400);
     }
 
    
@@ -103,10 +102,6 @@ export const githubCallback = async (req,res)=>{
 
     
 
-    }
-    catch(e){
-
-        return res.status(400).json({message:"FAILED TO LOGIN"});
-    }
+    
 
 }

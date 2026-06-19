@@ -1,16 +1,16 @@
 import { codeReviewService } from "../SERVICE/gemini.Service.js";
 import Review from "../MODEL/review.Model.js";
+import { AppError } from "../UTILS/appError.Utils.js";
 
 
 export const generateReview = async (req, res) => {
-    try
-    {
+    
         const {base64EncodedCode,sha,filePath,repoName} = req.body;
         const userId = req.user?._id;
 
         if(!base64EncodedCode || !sha || !filePath || !repoName)
         {
-            return res.status(400).json({message:"MISSING REQUIRED FIELDS"});
+            throw new AppError("MISSING REQUIRED FIELDS",400);
         }
 
         const existingReview = await Review.findOne({
@@ -53,11 +53,7 @@ export const generateReview = async (req, res) => {
 
         return res.status(200).json({review, message:"REVIEW GENERATED SUCCESSFULLY"});
 
-    }
-    catch(err)
-    {
-        console.error("Error generating review:", err);
-        return res.status(500).json({ message:"FAILED TO GENERATE REVIEW"});
-    }
+    
+   
     
 }

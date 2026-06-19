@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
     res.json({ ok: true, service: "ai" });
 });
 
-router.post('/review',authMiddleware,generateReview);
+router.post('/review',authMiddleware,asyncHandler(generateReview));
 
 
 
