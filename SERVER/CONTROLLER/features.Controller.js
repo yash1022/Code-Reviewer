@@ -1,12 +1,78 @@
 import User from "../MODEL/User.js";
 import axios from "axios";
-import {authMiddleware} from "../MIDDLEWARE/authMiddleware.js"
 import { AppError } from "../UTILS/appError.Utils.js"
+import { redisClient } from "../DB/connectRedis.js";
+
+
+
+export const fetchGithubReposTest = async(req,res)=>{
+    const userName = "yash1022";
+
+    const user = await User.findOne({Name: userName});
+
+    console.log("INSIDE TEST ROUTE");
+
+    if(!user)
+    {
+        // return res.status(404).json({message:"USER NOT FOUND"});
+         throw new AppError("USER NOT FOUND",404);
+    }
+
+    const accessToken = user.AccessToken;
+    const page = 1;
+    const limit = 5;
+
+    
+        const key = `githubReposTest:${username}:${page}`;
+
+        const cachedData = await redisClient.HGETALL(key);
+
+        if(cachedData.data && cachedData.pagination)
+        {
+            console.log("DATA FROM CACHE");
+            const data = JSON.parse(cachedData.data);
+          
+
+            return res.status(200).json({data,message:"DATA FROM CACHE" });
+        }
+           
+
+     const result = await axios.get(`https://api.github.com/users/${username}/repos`,{
+            headers:{
+                Authorization: `Bearer ${accessToken}`
+            },
+            params:{
+                page: Number(page),
+                per_page: Number(limit)
+            }
+        })
+
+        const data = Array.isArray(result.data) ? result.data : [];
+      
+
+        if(data.length > 0)
+            {
+
+            await redisClient.HSET(key, {
+            data: JSON.stringify(data)
+        });
+
+          await redisClient.EXPIRE(key, 3600);
+
+            } 
+      
+
+        
+        
+        return res.status(200).json({data,message:"DATA FROM GITHUB API" });
+}
 
 
 
 
 export const fetchGithubRepos = async(req,res)=>{
+
+    console.log("FETCH GITHUB REPOS CALLED");
     
 
         const userId = req.user._id;
@@ -23,8 +89,10 @@ export const fetchGithubRepos = async(req,res)=>{
         const accessToken = user.AccessToken;
         const username = user.Name;
 
+       
+
         if(!accessToken){
-            // return res.status(401).json({message:"GITHUB ACCESS TOKEN NOT FOUND. PLEASE SIGN IN AGAIN."});
+            
             throw new AppError("GITHUB ACCESS TOKEN NOT FOUND. PLEASE SIGN IN AGAIN.",401);
         }
 
@@ -32,8 +100,21 @@ export const fetchGithubRepos = async(req,res)=>{
 
         if(!page || !limit)
         {
-            // return res.status(400).json({message:"PAGE AND LIMIT ARE REQUIRED"});
-            throw new AppError("PAGE AND LIMIT ARE REQUIRED",400);
+           throw new AppError("PAGE AND LIMIT ARE REQUIRED",400);
+        }
+
+        const key = `githubRepos:${username}:${page}`;
+
+        const cachedData = await redisClient.HGETALL(key);
+
+        if(cachedData.data && cachedData.pagination)
+        {
+            console.log("DATA FROM CACHE");
+            const data = JSON.parse(cachedData.data);
+            const paginationInfo = JSON.parse(cachedData.pagination);
+
+            return res.status(200).json({data, pagination: paginationInfo,message:"DATA FROM CACHE" });
+           
         }
 
         const result = await axios.get(`https://api.github.com/users/${username}/repos`,{
@@ -45,6 +126,7 @@ export const fetchGithubRepos = async(req,res)=>{
                 per_page: Number(limit)
             }
         })
+        
 
         const paginationInfo = {
             totalRepos: result.data.length,
@@ -53,9 +135,25 @@ export const fetchGithubRepos = async(req,res)=>{
             hasPrevPage: Number(page) > 1
         }
 
-        console.log(result.data);
+        const data = Array.isArray(result.data) ? result.data : [];
+        const pagination = JSON.stringify(paginationInfo);
 
-        return res.status(200).json({ data: result.data, pagination: paginationInfo });
+        if(data.length > 0)
+            {
+
+            await redisClient.HSET(key, {
+            data: JSON.stringify(data),
+            pagination
+        });
+
+          await redisClient.EXPIRE(key, 3600);
+
+            } 
+      
+
+        
+        
+        return res.status(200).json({data, pagination: paginationInfo, message:"DATA FROM GITHUB API" });
   
 }
 

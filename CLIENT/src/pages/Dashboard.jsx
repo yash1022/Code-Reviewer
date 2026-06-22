@@ -23,19 +23,23 @@ function Dashboard() {
           }
         });
 
-        const data = Array.isArray(result.data)
-          ? result.data
-          : Array.isArray(result.data?.data)
-            ? result.data.data
-            : result.data?.data
-              ? [result.data.data]
+        const {
+          data: responseData,
+          pagination: paginationData = {},
+          message,
+        } = result.data;
+
+        console.log(message);
+
+        const data = Array.isArray(responseData)
+          ? responseData
+          : responseData
+              ? [responseData]
               : [];
 
-        const pagignationData = result.data?.pagination || {};
-
-        setShowNext(pagignationData.hasNextPage);
-        setShowPrev(pagignationData.hasPrevPage);
-        setPage(pagignationData.currentPage || 1);
+        setShowNext(paginationData.hasNextPage);
+        setShowPrev(paginationData.hasPrevPage);
+        setPage(paginationData.currentPage || 1);
 
 
         

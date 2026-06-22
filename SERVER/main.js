@@ -7,12 +7,13 @@ import authRoutes from './ROUTES/auth.routes.js'
 import featureRoutes from './ROUTES/feature.routes.js'
 import aiRoutes from './ROUTES/ai.routes.js'
 import connectDB from './DB/connectDB.js'
-import { errorHandler } from './MIDDLEWARE/errorHandler.Utils.js'
-
+import { errorHandler } from './MIDDLEWARE/errorHandler.Middleware.js'
+import {connectRedis} from './DB/connectRedis.js'
 
 const app = express()
 
-connectDB();
+await connectDB();
+await connectRedis();
 
 app.use(express.json(
     
