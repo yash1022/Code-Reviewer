@@ -9,15 +9,15 @@ import aiRoutes from './ROUTES/ai.routes.js'
 import connectDB from './DB/connectDB.js'
 import { errorHandler } from './MIDDLEWARE/errorHandler.Middleware.js'
 import {connectRedis} from './DB/connectRedis.js'
+import iplogger from './MIDDLEWARE/iplogger.js'
 
 const app = express()
 
 await connectDB();
 await connectRedis();
 
-app.use(express.json(
-    
-))
+app.use(iplogger)
+app.use(express.json())
 app.use(urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors({
