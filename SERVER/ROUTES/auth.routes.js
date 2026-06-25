@@ -1,7 +1,8 @@
 import { Router } from 'express'
 import { githubCallback, githubLogin } from '../CONTROLLER/auth.Controller.js'
-import { authMiddleware } from '../MIDDLEWARE/authMiddleware.js'
+import { authMiddleware } from '../MIDDLEWARE/auth.Middleware.js'
 import { asyncHandler } from '../UTILS/asyncHandler.Utils.js'
+import {rateLimiter} from '../MIDDLEWARE/aiRateLimiter.Middleware.js'
 
 const router = Router()
 
@@ -9,9 +10,9 @@ router.get('/status', (req, res) => {
   res.json({ ok: true, service: 'auth' })
 })
 
-router.get('/github',asyncHandler(githubLogin));
+router.get('/github',rateLimiter,asyncHandler(githubLogin));
 router.get('/github/callback',asyncHandler(githubCallback));
-router.get('/me',authMiddleware,asyncHandler((req,res)=>{
+router.get('/me',authMiddleware,rateLimiter,asyncHandler((req,res)=>{
 
  
 

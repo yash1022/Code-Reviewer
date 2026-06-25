@@ -2,6 +2,7 @@
 import 'dotenv/config'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
+import helmet from 'helmet'
 import express, { urlencoded } from 'express'
 import authRoutes from './ROUTES/auth.routes.js'
 import featureRoutes from './ROUTES/feature.routes.js'
@@ -27,6 +28,7 @@ app.use(cors({
 
 
 ))
+app.use(helmet())
 
 app.use('/api/auth', authRoutes)
 app.use('/api/features', featureRoutes)

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authMiddleware } from "../MIDDLEWARE/authMiddleware.js";
+import { authMiddleware } from "../MIDDLEWARE/auth.Middleware.js";
 import { generateReview } from "../CONTROLLER/ai.Controller.js";
 import { asyncHandler } from "../UTILS/asyncHandler.Utils.js";
 import aiRateLimiter from "../MIDDLEWARE/aiRateLimiter.Middleware.js";
